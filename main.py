@@ -1,10 +1,12 @@
 import telebot
+import json
 from telebot import types
+from pycvesearch import CVESearch
 
 TOKEN = '1891713169:AAE2kaM1l6evpd09rYxLoYlFCaz8ehuIhio'
 
 bot = telebot.TeleBot(TOKEN)
-
+cve = CVESearch("https://cve.circl.lu")
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -22,7 +24,13 @@ def start(message):
 @bot.message_handler(content_types=['text'])
 def bot_message(message):
     if message.chat.type == 'private':
-        if message.text in ('PC', 'Laptop'):
+        if message.text in ('test'):
+            # Example Request from the CVE API
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            exampleRequestData = cve.id('CVE-2010-3333')
+            bot.send_message(message.chat.id, bar, reply_markup=markup)
+
+        elif message.text in ('PC', 'Laptop'):
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
             item1 = types.KeyboardButton('Windows')
             item2 = types.KeyboardButton('Linux')
