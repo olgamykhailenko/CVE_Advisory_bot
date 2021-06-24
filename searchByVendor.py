@@ -1,26 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[1]:
-
-
 pip install pycvesearch && pip install pyTelegramBotAPI
-
-
-# In[ ]:
-
 
 import telebot
 import json
@@ -42,10 +22,3 @@ def start(message):
             bot.send_message(message.chat.id, url)
     
 bot.polling(none_stop=True)
-
-
-# In[ ]:
-
-
-
-
