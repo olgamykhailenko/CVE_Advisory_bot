@@ -11,6 +11,7 @@ MESSAGE_STATE = 0 # Global message state handler, can be used to figure out wher
 STATE_CONSTS = {
     "start": 0,
     "waiting_cve_input": 1,
+    "waiting" : 2
 }
 
 @bot.message_handler(commands=['start'])
@@ -50,9 +51,17 @@ def bot_message(message):
                 message_text += "\nAccess Vector: " + vuln['access']['vector']
                 message_text += "\nDescription:" + vuln['summary']
                 message_text += "\n\nYou can find more about this vulnerability on the following URL: https://nvd.nist.gov/vuln/detail/" + message.text
-
             MESSAGE_STATE = STATE_CONSTS["start"]
             bot.send_message(message.chat.id, message_text, reply_markup=markup)
+        
+        if MESSAGE_STATE == STATE_CONSTS["waiting"]:
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            vendor = message.text
+            url = "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query?={vendor}&search_type=last3months".format(vendor=vendor)
+            bot.send_message(message.chat.id, url, reply_markup=markup)
+            MESSAGE_STATE = STATE_CONSTS["start"]
+                
+            
 
         elif (message.text in ('Search By CVE Number Directly')) and MESSAGE_STATE == STATE_CONSTS["start"]:
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -61,6 +70,12 @@ def bot_message(message):
             bot.send_message(message.chat.id, message_text, reply_markup=markup)
             MESSAGE_STATE = STATE_CONSTS["waiting_cve_input"]
 
+        elif (message.text in ('Search by Vendor Name')) and MESSAGE_STATE == STATE_CONSTS["start"]:
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            message_text = "Please Enter the vendor, you are searching for!"
+            bot.send_message(message.chat.id, message_text, reply_markup=markup)
+            MESSAGE_STATE = STATE_CONSTS["waiting"]
+            
         elif message.text in ('PC', 'Laptop'):
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
             item1 = types.KeyboardButton('Windows')
